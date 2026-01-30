@@ -1,0 +1,14 @@
+path: C:/Users/tarun/OneDrive/Desktop/DATASET
+
+train: images/train
+val: images/val
+
+names:
+  0: PET
+  1: HDPE
+  2: LDPE
+  3: PP
+  4: PS
+  5: Other
+
+nc: 6
