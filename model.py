@@ -16,8 +16,6 @@ model.train(
     lrf=0.01,
     weight_decay=0.0003,
     momentum=0.937,
-
-
     mosaic=0.25,             
     mixup=0.10,
     copy_paste=0.10,
@@ -25,16 +23,10 @@ model.train(
     hsv_v=0.45,
     fliplr=0.45,
     flipud=0.10,
-    scale=0.55,
-    erasing=0.40,            
-
-   
-    amp=False,
-
+    scale=0.55,           
 
     freeze=None,
 
-   
     patience=20,            
     pretrained=True,
 )
