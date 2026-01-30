@@ -26,7 +26,6 @@ model.train(
     scale=0.55,           
 
     freeze=None,
-
     patience=20,            
     pretrained=True,
 )
