@@ -1,20 +1,50 @@
-from ultralytics import YOLO
-import torch
+import os
 
-def main():
-    print("CUDA available:", torch.cuda.is_available())
+BASE_DIR = os.getcwd()
 
-    model = YOLO("runs/detect/train10/weights/best.pt")
+def rename_split(split):
+    img_dir = os.path.join(BASE_DIR, "images", split)
+    lbl_dir = os.path.join(BASE_DIR, "labels", split)
 
-    metrics = model.val(
-        data="data.yaml",
-        device=0,        # GPU (CUDA)
-        workers=4,       # use 2–4 for RTX 3050
-        batch=8,         # reduce if VRAM issue
-        save_json=True
-    )
+    images = sorted([f for f in os.listdir(img_dir)
+                     if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))])
 
-    print(metrics)
+    labels = sorted([f for f in os.listdir(lbl_dir) if f.endswith(".txt")])
+
+    image_names = set(os.path.splitext(f)[0] for f in images)
+    label_names = set(os.path.splitext(f)[0] for f in labels)
+
+    common = sorted(image_names.intersection(label_names))
+
+    print(f"\nProcessing {split}")
+    print(f"Matched pairs: {len(common)}")
+
+    counter = 1
+
+    for name in common:
+        # detect image extension
+        for ext in [".jpg", ".jpeg", ".png", ".webp"]:
+            img_path = os.path.join(img_dir, name + ext)
+            if os.path.exists(img_path):
+                image_ext = ext
+                break
+
+        old_img = os.path.join(img_dir, name + image_ext)
+        old_lbl = os.path.join(lbl_dir, name + ".txt")
+
+        new_name = f"{split}_{counter:04d}"
+
+        new_img = os.path.join(img_dir, new_name + image_ext)
+        new_lbl = os.path.join(lbl_dir, new_name + ".txt")
+
+        os.rename(old_img, new_img)
+        os.rename(old_lbl, new_lbl)
+
+        counter += 1
+
+    print(f"{split} renamed successfully.")
 
 if __name__ == "__main__":
-    main()
+    rename_split("train")
+    rename_split("val")
+    print("\nAll files renamed cleanly.")
